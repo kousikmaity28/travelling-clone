@@ -1,45 +1,46 @@
 'use client';
-import { useCallback, useState } from "react";
-import {AiOutlineMenu} from "react-icons/ai"
-import Avatar from "../Avatar";
-import useRegisterModal from '../../hooks/useRegisterModal';
-import useRentModal from "@/app/hooks/useRentModal";
-import  useLoginModal  from '@/app/hooks/useLoginModal';
-// import { User } from "@prisma/client";
-import { signIn } from 'next-auth/react';
-import { signOut } from 'next-auth/react';
-import { SafeUser } from '@/app/types';
-import { useRouter } from 'next/navigation';
-import MenuIteem from "./MenuIteem";
 
+import { useCallback, useState } from "react";
+import { AiOutlineMenu } from "react-icons/ai";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import useLoginModal from "@/app/hooks/useLoginModal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useRentModal from "@/app/hooks/useRentModal";
+import { SafeUser } from "@/app/types";
+
+import MenuItem from "./MenuItem";
+import Avatar from "../Avatar";
 
 interface UserMenuProps {
-  currentUser?: SafeUser | null;
+  currentUser?: SafeUser | null
 }
 
-const UserMenu:React.FC<UserMenuProps> = ({
+const UserMenu: React.FC<UserMenuProps> = ({
   currentUser
 }) => {
-  const registerModal = useRegisterModal();
-  const loginModal = useLoginModal();
-  const rentModal=useRentModal();
   const router = useRouter();
 
+  const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
+  const rentModal = useRentModal();
 
-    const [isOpen,setisOpen] = useState(false);
-    const toggleOpen=useCallback(()=>{
-        setisOpen((value)=>!value)
-    },[]);
+  const [isOpen, setIsOpen] = useState(false);
 
-    const onRent = useCallback(() => {
-      if (!currentUser) {
-        return loginModal.onOpen();
-      }
-  
-      rentModal.onOpen();
-    }, [loginModal, rentModal, currentUser]);
+  const toggleOpen = useCallback(() => {
+    setIsOpen((value) => !value);
+  }, []);
 
-  return (
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    rentModal.onOpen();
+  }, [loginModal, rentModal, currentUser]);
+
+  return ( 
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div 
@@ -56,10 +57,13 @@ const UserMenu:React.FC<UserMenuProps> = ({
             transition 
             cursor-pointer
           "
-          >
-            airbnb your Home
-          </div>
-          <div onClick={toggleOpen} className='p-4
+        >
+          Airbnb your home
+        </div>
+        <div 
+        onClick={toggleOpen}
+        className="
+          p-4
           md:py-1
           md:px-2
           border-[1px] 
@@ -72,15 +76,17 @@ const UserMenu:React.FC<UserMenuProps> = ({
           cursor-pointer 
           hover:shadow-md 
           transition
-          '>
-            <AiOutlineMenu />
-            <div className="hidden md:block">
-                <Avatar src={currentUser?.image}/>
-            </div>
+          "
+        >
+          <AiOutlineMenu />
+          <div className="hidden md:block">
+            <Avatar src={currentUser?.image} />
           </div>
-          </div>
-          {isOpen && (
-            <div className="
+        </div>
+      </div>
+      {isOpen && (
+        <div 
+          className="
             absolute 
             rounded-xl 
             shadow-md
@@ -91,35 +97,54 @@ const UserMenu:React.FC<UserMenuProps> = ({
             right-0 
             top-12 
             text-sm
-          ">
-                <div className="flex flex-col cursor-pointer">
-                  {currentUser?(                   
-                     <>
-                    <MenuIteem onClick={()=>router.push("/trips")} 
-                        label="My Trips"/>
-                        <MenuIteem onClick={()=>router.push('/favorites')}
-                        label="My Favorites"/>
-                        <MenuIteem onClick={()=>router.push('/reservations')}
-                        label="My Reservation"/>
-                        <MenuIteem onClick={()=> router.push('/properties')}
-                        label="My Propaties"/>
-                        <MenuIteem onClick={rentModal.onOpen}
-                        label="Airbnb My Home"/>
-                        <MenuIteem onClick={()=>signOut()}
-                        label="Log Out"/>
-                    </>
-                    ):(
-                       <>
-                    <MenuIteem onClick={loginModal.onOpen}
-                        label="Log In"/>
-                        <MenuIteem onClick={registerModal.onOpen}
-                        label="sign Up"/>
-                    </>)}
-                </div>
-            </div>
-          )}
+          "
+        >
+          <div className="flex flex-col cursor-pointer">
+            {currentUser ? (
+              <>
+                <MenuItem 
+                  label="My trips" 
+                  onClick={() => router.push('/trips')}
+                />
+                <MenuItem 
+                  label="My favorites" 
+                  onClick={() => router.push('/favorites')}
+                />
+                <MenuItem 
+                  label="My reservations" 
+                  onClick={() => router.push('/reservations')}
+                />
+                <MenuItem 
+                  label="My properties" 
+                  onClick={() => router.push('/properties')}
+                />
+                <MenuItem 
+                  label="Airbnb your home" 
+                  onClick={rentModal.onOpen}
+                />
+                <hr />
+                <MenuItem 
+                  label="Logout" 
+                  onClick={() => signOut()}
+                />
+              </>
+            ) : (
+              <>
+                <MenuItem 
+                  label="Login" 
+                  onClick={loginModal.onOpen}
+                />
+                <MenuItem 
+                  label="Sign up" 
+                  onClick={registerModal.onOpen}
+                />
+              </>
+            )}
           </div>
-  )
+        </div>
+      )}
+    </div>
+   );
 }
-
-export default UserMenu
+ 
+export default UserMenu;
