@@ -48,6 +48,7 @@
     "@types/react-date-range": "^1.4.4",
     "eslint": "^8.45.0",
     "eslint-config-next": "^13.4.10",
+    "gh-pages": "^5.0.0",
     "prisma": "^5.0.0"
   }
 }
